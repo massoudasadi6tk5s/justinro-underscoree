@@ -1,0 +1,15 @@
+server:
+  port: 8301
+  servlet:
+    context-path: /
+
+spring:
+  messages:
+    encoding: UTF-8
+    basename: i18n/messages
+
+castle:
+  upload:
+    # 自行配置可访问的路径
+    fileDomain: http://up.hcses.cn/pdftools
+    fileServerPath: /www/wwwroot/up.hcses.cn/pdftools/  #原始文件的服务器存储位置

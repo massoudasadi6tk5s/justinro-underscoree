@@ -1,12 +1,15 @@
 server:
   port: 8301
   servlet:
-    context-path: /
+    context-path: /castle
 
 spring:
   messages:
     encoding: UTF-8
     basename: i18n/messages
+  thymeleaf:
+    suffix: .html
+    prefix: classpath:/page/
 
 castle:
   upload:

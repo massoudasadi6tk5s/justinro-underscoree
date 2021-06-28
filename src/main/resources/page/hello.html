@@ -3,9 +3,20 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>Title</title>
+		<script src="preview.js"></script>
+		<style>
+			.header {
+			}
+		</style>
 	</head>
 	<body>
-		hello
-		<script src="preview.js"></script>
+		<ul>
+			<li id="li">123</li>
+		</ul>
+		<script>
+			document.getElementById("li").onclick = () => {
+				$Preview.show(["http://up.hcses.cn/pdftools/20210106/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png", "http://up.hcses.cn/pdftools/20210106/lkfl_12991807.pdf"], {})
+			}
+		</script>
 	</body>
 </html>

@@ -3,7 +3,6 @@
 	let modalIndex = 9999
 	function formatType(url) {
 		const type = url.split(".").pop()
-		console.log(type)
 		if (!type) {
 			return "txt"
 		}
@@ -68,13 +67,16 @@
 					}
 					.preview .preview-body-main{
 						width: 100%;
-						overflow: hidden;
 						position: relative;
 						cursor: grab;
 						transform-origin: center;
 					}
 					.preview .preview-body-main.grabbing{
 						cursor: grabbing;
+					}
+					.preview .preview-body-main.preview-body-mp3,
+					.preview .preview-body-main.preview-body-mp4 {
+						height: calc(100% - 46px);
 					}
 					.preview button:focus{
 						border: 0;
@@ -116,14 +118,42 @@
 						opacity: .7;
 					}
 					.preview .preview-operations span:hover{
-						opacity: 1;
+						border: 0;
 					}
 					.preview-iframe{
 						width: 100%;
 						height: 70vh;
-						border: 0;
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						margin: auto;
 					}
-					.preview-audio{}
+					.preview-audio{
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						margin: auto;
+					}
+					.preview-audio:focus{
+						outline: 0;
+					}
+					.preview-video{
+						position: absolute;
+						top: 0;
+						left: 0;
+						bottom: 0;
+						right: 0;
+						margin: auto;
+						width: 100%;
+						height: 100%;
+					}
+					.preview-video:focus{
+						outline: 0;
+					}
 				`)
 			}
 		}
@@ -434,7 +464,7 @@
 		}
 
 		formatOption(option) {
-			if (typeof option.url == "string") {
+			if (!Array.isArray(option.url)) {
 				option.url = [option.url]
 			}
 			return {
@@ -538,6 +568,7 @@
 		}
 		drawBody() {
 			const { $el, type, title } = this.$displayChild
+
 			this.body.innerHTML = ""
 			if (Array.isArray($el)) {
 				this.body.append(...$el)
@@ -562,47 +593,88 @@
 				},
 				pdf() {},
 				txt() {},
+				mp3() {
+					this.body.classList.add("preview-body-mp3")
+					$el.load()
+					$el.play()
+				},
+				mp4() {
+					this.body.classList.add("preview-body-mp4")
+					$el.load()
+					$el.play()
+				},
+
+				before() {
+					this.body.className = "preview-body-main"
+				},
+				after() {},
 			}
-			Type[type] && Type[type](this)
+
+			Type.before.call(this)
+			Type[type] && Type[type].call(this)
+			Type.after.call(this)
 		}
 	}
 	class Content extends Style {
 		constructor(option) {
 			super()
-			this.option = {
-				url: "",
-				...option,
-			}
-			this.title = option.url.split("/").pop()
-			this.type = this.option.type = formatType(option.url)
+			this.option = this.formatOption(option)
+			this.title = this.option.url.title
+			this.type = this.option.type = formatType(this.option.url.extname)
 			this.init()
 		}
 		type = ""
 		$el = ""
+		formatOption(option) {
+			if (!option.url) {
+				option.url = ""
+			}
+			if (typeof option.url == "string") {
+				option.url = {
+					extname: option.url.split(".").pop(),
+					title: option.url.split("/").pop(),
+					path: option.url,
+				}
+			} else {
+				option.url = {
+					extname: option.url.extname || option.url.path.splice(".").pop() || "img",
+					title: option.url.title || option.url.path.split("/").pop() || "",
+					path: option.url.path || "",
+				}
+			}
+			return {
+				...option,
+			}
+		}
 		init() {
-			const { type, url } = this.option
+			const {
+				type,
+				url: { path },
+			} = this.option
 			const typeHandle = {
 				img: () => {
-					const img = new DrawImg(url)
+					const img = new DrawImg(path)
 					this.$el = img.$el
 				},
 				pdf: () => {
-					const pdf = new DrawPdf(url)
+					const pdf = new DrawPdf(path)
 					this.$el = pdf.$el
 				},
 				txt: () => {},
 				mp3: () => {
-					const mp3 = new DrawMp3(url)
+					const mp3 = new DrawMp3(path)
 					this.$el = mp3.$el
 				},
-				mp4: () => {},
+				mp4: () => {
+					const mp4 = new DrawMp4(path)
+					this.$el = mp4.$el
+				},
 			}
 			typeHandle[type] ? typeHandle[type]() : typeHandle["txt"]()
 		}
 	}
 
 	class DrawImg extends Style {
-		$el
 		constructor(url) {
 			super()
 			this.$el = document.createElement("div")
@@ -610,10 +682,16 @@
 			const img = new Image()
 			img.src = url
 			this.$el.append(img)
+
+			img.onerror = () => {
+				$Preview.error({
+					type: "img",
+					msg: "图片地址错误",
+				})
+			}
 		}
 	}
 	class DrawPdf extends Style {
-		$el
 		constructor(url) {
 			super()
 			this.$el = document.createElement("iframe")
@@ -625,11 +703,35 @@
 		}
 	}
 	class DrawMp3 extends Style {
-		constructor() {
+		constructor(url) {
 			super()
 			this.$el = document.createElement("audio")
 			this.$el.classList.add("preview-audio")
 			this.$el.src = url
+			this.$el.controls = true
+
+			this.$el.onerror = () => {
+				$Preview.error({
+					type: "mp3",
+					msg: "音频地址错误",
+				})
+			}
+		}
+	}
+	class DrawMp4 extends Style {
+		constructor(url) {
+			super()
+			this.$el = document.createElement("video")
+			this.$el.classList.add("preview-video")
+			this.$el.src = url
+			this.$el.controls = true
+
+			this.$el.onerror = () => {
+				$Preview.error({
+					type: "mp4",
+					msg: "视频地址错误",
+				})
+			}
 		}
 	}
 
@@ -648,6 +750,8 @@
 				this.modal.splice(index, 1)
 			}
 			this.modal.push(modal)
+
+			return this
 		}
 		formatOption(option) {
 			return {
@@ -655,6 +759,15 @@
 				active: 0,
 				...option,
 			}
+		}
+		closeAll() {
+			this.modal.forEach(item => {
+				item.closeHandle()
+			})
+		}
+		error(msg) {
+			// 暂时处理为alert
+			alert(msg.msg)
 		}
 	}
 

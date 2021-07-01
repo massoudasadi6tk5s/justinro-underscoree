@@ -13,9 +13,43 @@
 		<ul>
 			<li id="li">123</li>
 		</ul>
+
+		<input type="text" id="inputUrl" />
+		<input type="file" name="" id="inputFile" />
 		<script>
 			document.getElementById("li").onclick = () => {
-				$Preview.show(["http://up.hcses.cn/pdftools/20210106/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png", "http://up.hcses.cn/pdftools/20210106/lkfl_12991807.pdf"], {})
+				$Preview.show(
+					[
+						"http://up.hcses.cn/pdftools/20210106/%E5%92%B1%E4%BB%AC%E7%BB%93%E5%A9%9A%E5%90%A7%E9%93%83%E5%A3%B0.mp3",
+						"http://up.hcses.cn/pdftools/20210106/%E5%9B%9B%E4%B8%AA%E6%84%8F%E8%AF%86%E8%A7%86%E9%A2%91.mp4",
+						"http://up.hcses.cn/pdftools/20210106/%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE.png",
+						"http://up.hcses.cn/pdftools/20210106/lkfl_12991807.pdf",
+					],
+					{
+						active: 1,
+					},
+				)
+			}
+
+			inputUrl.onchange = e => {
+				$Preview.show(e.target.value)
+			}
+			inputFile.onchange = e => {
+				const url = []
+				for (let i = 0; i < inputFile.files.length; i++) {
+					const file = inputFile.files[i]
+					url.push({
+						path: URL.createObjectURL(file),
+						extname: file.type.split("/").pop(),
+						title: file.name,
+					})
+				}
+				console.log(inputFile.files)
+				$Preview.show(url)
+			}
+
+			$Preview.error = e => {
+				console.log(e)
 			}
 		</script>
 	</body>

@@ -9,16 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 文件转 pdf 示例
- * @author Dawn
+ * 文件转 PDF 示例
+ * @author hcwdc.com
  */
 @RestController
-@RequestMapping("/demo")
+@RequestMapping("/docpreview")
 public class PdfToolsDemo {
     @Autowired
     private FileUploaderUtils fileUploaderUtils;
@@ -46,12 +45,12 @@ public class PdfToolsDemo {
 
 
     /**
-     * 文件上传并转为pdf
+     * 文件上传并转为PDF
      * @param file
      * @return
      * @throws Exception
      */
-    @PostMapping("toPdf")
+    @PostMapping("topdf")
     public RespBody<Map<String, Object>> toPdf(@RequestParam("file") MultipartFile file) throws Exception {
         if (file.isEmpty()) {
             return RespBody.fail(-1,"请上传文件");
@@ -67,12 +66,12 @@ public class PdfToolsDemo {
     }
 
     /**
-     * 文件上传并转为图片
+     * 文件上传并转为图片PNG格式
      * @param file
      * @return
      * @throws Exception
      */
-    @PostMapping("toPng")
+    @PostMapping("topng")
     public RespBody<Map<String, Object>> toPng(@RequestParam("file") MultipartFile file) throws Exception {
         if (file.isEmpty()) {
             return RespBody.fail(-1,"请上传文件");

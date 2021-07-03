@@ -769,6 +769,26 @@
 			// 暂时处理为alert
 			alert(msg.msg)
 		}
+		formatType = formatType
+		formatShowType(url) {
+			const type = url.split(".").pop()
+			if (!type) {
+				return "txt"
+			}
+			if (/gif|bmp|jpeg|jpg|png|ico|img/i.test(type)) {
+				return "img"
+			}
+			if (/doc|docx/i.test(type)) {
+				return "word"
+			}
+			if (/mp3|ogg|wav/i.test(type)) {
+				return "mp3"
+			}
+			if (/mp4|webm|mkv/i.test(type)) {
+				return "mp4"
+			}
+			return type
+		}
 	}
 
 	window.$Preview = new Preview()

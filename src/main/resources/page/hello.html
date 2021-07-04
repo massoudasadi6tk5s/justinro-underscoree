@@ -46,7 +46,7 @@
 			</div>
 			<div class="item">
 				<div class="label">PDF地址：</div>
-				<input class="input pdf-url" type="text" />
+				<input disabled class="input pdf-url" type="text" />
 				<button class="disabled pdf-btn">
 					<img src="./img/pdf.png" alt="" />
 					<img src="./img/pdf-gray.png" alt="" />
@@ -55,8 +55,8 @@
 			</div>
 			<div class="item">
 				<div class="label">PNG地址：</div>
-				<div class="content">
-					<input class="input" type="text" />
+				<div class="content-png-input">
+					<input disabled class="input" type="text" />
 				</div>
 				<button class="disabled png-btn">
 					<img src="./img/pdf.png" alt="" />
@@ -147,7 +147,7 @@
 					changePng: getElement(".change-png"),
 					pdfUrl: getElement(".pdf-url"),
 					pdfBtn: getElement(".pdf-btn"),
-					content: getElement(".content"),
+					content: getElement(".content-png-input"),
 					pngBtn: getElement(".png-btn"),
 
 					get contentInput() {
@@ -231,6 +231,7 @@
 						return urls
 					},
 					set pngUrl(value) {
+						console.log(value)
 						if (value == null || typeof value == "string") {
 							this.pngUrl = [value || ""]
 							return
@@ -239,6 +240,8 @@
 
 						value.forEach(item => {
 							const input = document.createElement("input")
+							input.classList.add("input")
+							input.disabled = true
 							input.value = item
 							element.content.append(input)
 						})
@@ -303,6 +306,12 @@
 					})
 				}
 				element.changePng.onclick = () => {
+					// formdata.pngUrl = [
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// ]
+
 					ajax({
 						url: previewPng,
 						method: "POST",

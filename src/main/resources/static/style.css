@@ -117,14 +117,15 @@ button.active img:nth-of-type(1) {
 button.active img:nth-of-type(2) {
 	display: none;
 }
-.content {
+.content,
+.content-png-input {
 	text-align: center;
 	flex: 1;
 }
-.content .input {
+.content-png-input .input {
 	margin-bottom: 15px;
 }
-.content .input:last-child {
+.content-png-input .input:last-child {
 	margin-bottom: 0;
 }
 .c-title {

@@ -624,7 +624,6 @@
 			this.init()
 		}
 		type = ""
-		$el = ""
 		formatOption(option) {
 			if (!option.url) {
 				option.url = ""

@@ -1,6 +1,15 @@
 "use strict"
 ;(function () {
-	let modalIndex = 9999
+	let modalIndex = 9999 // 初始 modal Z轴
+	/**
+	 * 粗类型分析
+	 * 图片预览：.gif、bmp、jpeg、jpg、png、ico
+	 * 文档预览：.doc、docx、xls、xlsx、ppt、pptx
+	 * PDF文件：pdf
+	 * 文本文件：txt
+	 * 音频文件：mp3、ogg、wav
+	 * 视频文件：mp4、webm、mkv
+	 */
 	function formatType(url) {
 		const type = url.split(".").pop()
 		if (!type) {
@@ -20,6 +29,9 @@
 		}
 		return "txt"
 	}
+	/**
+	 * 统一样式控制
+	 */
 	class Style {
 		constructor() {
 			this.headerStyle = document.getElementById("preview-style")
@@ -170,11 +182,13 @@
 		modal = {
 			index: 10000,
 		}
+		// 为 el 设置 样式
 		setStyle(el, css) {
 			Object.keys(css).forEach(key => {
 				el.style[key] = css[key]
 			})
 		}
+		// 在 header 中追加样式
 		setHeaderStyle(css) {
 			this.headerStyle.innerHTML += css
 		}
@@ -184,40 +198,39 @@
 			})
 		}
 	}
+	/**
+	 * modal 弹窗
+	 */
 	class Modal extends Style {
 		constructor(option) {
 			super()
+			// 格式化参数
 			this.option = this.formatOption(option)
+			// 构建内容
 			this.createContent()
+			// 构建弹窗
 			this.create()
 		}
-		/**
-		 * 图片预览：.gif、bmp、jpeg、jpg、png、ico
-		 * 文档预览：.doc、docx、xls、xlsx、ppt、pptx
-		 * PDF文件：pdf
-		 * 文本文件：txt
-		 * 音频文件：mp3、ogg、wav
-		 * 视频文件：mp4、webm、mkv
-		 */
+		// 弹窗的位置信息
 		position = {
 			top: 0,
 			left: 0,
 			oX: 0,
 			oY: 0,
 		}
-		$el
-		$children = []
-		body = ""
-		header
-		operations
-		_title
+		$el // 弹窗根元素
+		$children = [] // 弹窗子元素
+		body = "" // 弹窗主体部分
+		header // 弹窗顶部部分
+		operations // 底部操作栏
+		_title // 标题
 		get title() {
 			return this._title
 		}
 		set title(value) {
 			this._title.innerHTML = value || ""
 		}
-		_visible = false
+		_visible = false // 控制弹窗是否可见
 		get visible() {
 			return this._visible
 		}
@@ -227,26 +240,31 @@
 			}
 			this._visible = visible
 		}
+		// 当前展示的下标
 		get active() {
 			return this.option.active
 		}
+		// 绘制到 index 下标的展示内容
 		set active(index) {
 			this.option.active = index
 			this.drawOperation()
 			this.drawBody()
 		}
+		// 当前展示的内容
 		get $displayChild() {
 			return this.$children[this.active]
 		}
 
-		operationBtns = []
+		operationBtns = [] // 操作按钮组
 		operationSitting = {
+			// 操作按钮文件关联
 			img: ["prev", "next", "rotateClockwise", "rotateAntiClockwise", "enlarge", "narrow", "reduction"],
 			pdf: ["prev", "next"],
 			txt: ["prev", "next"],
 			mp3: ["prev", "next"],
 			mp4: ["prev", "next"],
 		}
+		// 操作按钮配置
 		operationBtnsObject = [
 			{
 				id: "prev",
@@ -291,19 +309,24 @@
 				handle: this.reduction.bind(this),
 			},
 		]
+		// 位置信息记录
 		_top = 0
 		_left = 0
 		_scale = 1
 		_rotate = 0
+		// 计算当前角度的 cos 值
 		get cosVal() {
 			return Math.cos((this.rotate * Math.PI) / 180).toFixed(6)
 		}
+		// 计算当前角度的 sin 值
 		get sinVal() {
 			return Math.sin((this.rotate * Math.PI) / 180).toFixed(6)
 		}
+		// 返回当前矩阵位置
 		get matrix() {
 			return `matrix(${this.cosVal * this.scale}, ${this.sinVal}, ${this.sinVal * -1}, ${this.cosVal * this.scale}, ${this.left}, ${this.top})`
 		}
+		// 返回|设置 top值
 		get top() {
 			return this._top
 		}
@@ -313,6 +336,7 @@
 				transform: this.matrix,
 			})
 		}
+		// 返回|设置 left值
 		get left() {
 			return this._left
 		}
@@ -322,6 +346,7 @@
 				transform: this.matrix,
 			})
 		}
+		// 返回|设置 缩放值
 		get scale() {
 			return this._scale
 		}
@@ -331,6 +356,7 @@
 				transform: this.matrix,
 			})
 		}
+		// 返回|设置 旋转值
 		get rotate() {
 			return this._rotate
 		}
@@ -340,8 +366,10 @@
 				transform: this.matrix,
 			})
 		}
+		// 当前移动轴的位置
 		oX = 0
 		oY = 0
+		// 切换到前一个
 		prev() {
 			if (this.active - 1 < 0) {
 				return
@@ -349,6 +377,7 @@
 			this.reduction()
 			this.active--
 		}
+		// 切换到后一个
 		next() {
 			const length = this.$children.length
 
@@ -358,25 +387,30 @@
 			this.reduction()
 			this.active++
 		}
+		// 顺时针旋转 90 度
 		rotateClockwise() {
 			this.rotate += 90
 		}
+		// 逆时针旋转 90 度
 		rotateAntiClockwise() {
 			this.rotate -= 90
 		}
+		// 放大 10%
 		enlarge() {
 			this.up()
 		}
+		// 缩小 10%
 		narrow() {
 			this.down()
 		}
+		// 还原
 		reduction() {
 			this.top = 0
 			this.left = 0
 			this.scale = 1
 			this.rotate = 0
 		}
-
+		// 滚轮操作
 		wheel(event) {
 			if (event.detail) {
 				if (event.detail > 0) {
@@ -392,6 +426,7 @@
 				}
 			}
 		}
+		// 放大方法
 		up() {
 			if (this.scale + 0.1 >= 3) {
 				this.scale = 3
@@ -399,6 +434,7 @@
 			}
 			this.scale += 0.1
 		}
+		// 缩小方法
 		down() {
 			if (this.scale - 0.1 <= 0.3) {
 				this.scale = 0.3
@@ -406,12 +442,14 @@
 			}
 			this.scale -= 0.1
 		}
+		// 图片鼠标摁下事件
 		mousedown(e) {
 			this.body.classList.add("grabbing")
 			this.body.onmousemove = this.mousemove.bind(this)
 			this.oX = e.pageX
 			this.oY = e.pageY
 		}
+		// 图片鼠标移动事件
 		mousemove(e) {
 			const left = e.pageX
 			const top = e.pageY
@@ -425,16 +463,18 @@
 			this.top += nY
 			this.left += nX
 		}
+		// 图片鼠标抬起事件
 		mouseup() {
 			this.body.classList.remove("grabbing")
 			this.body.onmousemove = null
 		}
-
+		// modal 鼠标摁下事件
 		titleMousedown(e) {
 			this.header.onmousemove = this.titleMousemove.bind(this)
 			this.position.oX = e.pageX
 			this.position.oY = e.pageY
 		}
+		// modal 鼠标移动事件
 		titleMousemove(e) {
 			const left = e.pageX
 			const top = e.pageY
@@ -459,10 +499,11 @@
 				left: this.position.left + "px",
 			})
 		}
+		// modal 鼠标抬起事件
 		titleMouseup() {
 			this.header.onmousemove = null
 		}
-
+		// 格式化参数
 		formatOption(option) {
 			if (!Array.isArray(option.url)) {
 				option.url = [option.url]
@@ -473,11 +514,13 @@
 				...option,
 			}
 		}
+		// 设置 modal Z轴
 		setModalIndex(index) {
 			this.setStyle(this.$el, {
 				"z-index": index || ++modalIndex,
 			})
 		}
+		// 构建整体
 		create() {
 			// 外包围
 			const warp = document.createElement("div")
@@ -524,6 +567,7 @@
 				this.titleMouseup()
 			})
 		}
+		// 构建内容部分
 		createContent() {
 			this.option.url.map(url => {
 				this.$children.push(
@@ -533,10 +577,12 @@
 				)
 			})
 		}
+		// 关闭事件
 		closeHandle() {
 			this.visible = false
 			this.close && this.close(this.option.args)
 		}
+		// 绘制操作按钮区
 		drawOperation() {
 			if (!this.operations) {
 				this.operations = document.createElement("div")
@@ -566,6 +612,7 @@
 			this.operations.append(...operationBtns)
 			this.$body.append(this.operations)
 		}
+		// 绘制主体区域部分
 		drawBody() {
 			const { $el, type, title } = this.$displayChild
 
@@ -579,6 +626,7 @@
 
 			const Type = {
 				img: () => {
+					// 判断是否已经添加过事件
 					if (this.body.previewAnimate) {
 						return
 					}
@@ -586,6 +634,7 @@
 					if (this.body.addEventListener) {
 						this.body.addEventListener("DOMMouseScroll", this.wheel.bind(this), false)
 					}
+					// 添加滚轮事件
 					this.body.onmousewheel = this.wheel.bind(this)
 
 					this.body.onmousedown = this.mousedown.bind(this)
@@ -615,6 +664,8 @@
 			Type.after.call(this)
 		}
 	}
+	// 构建主体部分
+	// 一次只能构建一个内容
 	class Content extends Style {
 		constructor(option) {
 			super()
@@ -623,7 +674,7 @@
 			this.type = this.option.type = formatType(this.option.url.extname)
 			this.init()
 		}
-		type = ""
+		type = "" // 记录文件粗解析信息
 		formatOption(option) {
 			if (!option.url) {
 				option.url = ""
@@ -673,6 +724,7 @@
 		}
 	}
 
+	// 绘制图片类型
 	class DrawImg extends Style {
 		constructor(url) {
 			super()
@@ -690,6 +742,7 @@
 			}
 		}
 	}
+	// 绘制pdf类型
 	class DrawPdf extends Style {
 		constructor(url) {
 			super()
@@ -701,6 +754,7 @@
 			this.$el.frameborder = "0"
 		}
 	}
+	// 绘制音频类型
 	class DrawMp3 extends Style {
 		constructor(url) {
 			super()
@@ -717,6 +771,7 @@
 			}
 		}
 	}
+	// 绘制视频类型
 	class DrawMp4 extends Style {
 		constructor(url) {
 			super()
@@ -734,8 +789,10 @@
 		}
 	}
 
+	// 主对象
 	class Preview {
 		modal = []
+		// 展示方法
 		show(url, option) {
 			option = this.formatOption(option)
 			const modal = new Modal({

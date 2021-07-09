@@ -4,13 +4,22 @@
 html,
 body {
 	background: #f2f5fb;
-	padding-bottom: 60px;
+	padding-bottom: 30px;
 }
 
 :root {
 	--color: #2051e2;
 	--textColor: #666;
 	--borderColor: #ddd;
+}
+
+.use-agreement {
+	color: var(--textColor);
+	font-size: 14px;
+	text-align: center;
+	max-width: 1020px;
+	margin: auto;
+	margin-top: 30px;
 }
 
 .card {

@@ -81,6 +81,13 @@ word 转 pdf、word 转图片、office 格式转换、在线文件预览
 ```
 window.$Preview.show : (urls: string | Array<string>, options: Options) => $Preview
 
+// e.g
+window.$Preview.show('http://123.png')
+window.$Preview.show(['http://123.png', 'http://456.png'])
+window.$Preview.show(['http://123.png', 'http://456.png'], {
+	active: 1
+})
+
 urls: Array<string> // 展示的文件地址列表
 options: {
 	active: number, // 打开时展示第几张 下标从 0 开始

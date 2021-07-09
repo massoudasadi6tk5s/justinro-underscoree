@@ -4,6 +4,7 @@
 html,
 body {
 	background: #f2f5fb;
+	padding-bottom: 60px;
 }
 
 :root {
@@ -40,7 +41,7 @@ body {
 .title {
 	font-size: 27px;
 	text-align: center;
-	margin-top: 110px;
+	margin-top: 70px;
 	line-height: 110px;
 	margin-bottom: 0;
 }
@@ -249,7 +250,8 @@ button.active img:nth-of-type(2) {
 	display: none;
 }
 
-.json-textarea {
+.json-textarea,
+.png-json-textarea {
 	max-height: 400px;
 	min-height: 200px;
 	-webkit-user-modify: read-write-plaintext-only;

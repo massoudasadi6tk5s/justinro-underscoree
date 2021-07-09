@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<title>Title</title>
+		<title>文档在线预览模块</title>
 		<link rel="stylesheet" href="style.css" />
 		<script src="preview.js"></script>
 	</head>
@@ -63,6 +63,10 @@
 					<img src="./img/pdf-gray.png" alt="" />
 					立即预览
 				</button>
+			</div>
+			<div class="item">
+				<div class="label">PNG JSON：</div>
+				<div contenteditable class="png-json-textarea input"></div>
 			</div>
 		</div>
 		<script>
@@ -149,6 +153,7 @@
 					pdfBtn: getElement(".pdf-btn"),
 					content: getElement(".content-png-input"),
 					pngBtn: getElement(".png-btn"),
+					pngJson: getElement(".png-json-textarea"),
 
 					get contentInput() {
 						return this.content.children
@@ -311,6 +316,11 @@
 					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
 					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
 					// ]
+					// element.pngJson.innerHTML = JSON.stringify({data: [
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// 	"http://up.icuapi.com/docpreview/20210126/2a1856adc11c41d482f64c5348dbfec2_1.png",
+					// ]}, null, 2)
 
 					ajax({
 						url: previewPng,
@@ -321,6 +331,8 @@
 						type: "formdata",
 					}).then(res => {
 						formdata.pngUrl = res.data.pngList
+
+						element.pngJson.innerHTML = JSON.stringify(res, null, 2)
 					})
 				}
 			})()

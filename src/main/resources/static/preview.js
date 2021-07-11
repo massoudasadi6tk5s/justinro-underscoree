@@ -1,4 +1,5 @@
 "use strict"
+// 启用严格模式
 ;(function () {
 	let modalIndex = 9999 // 初始 modal Z轴
 	/**
@@ -13,20 +14,25 @@
 	function formatType(url) {
 		const type = url.split(".").pop()
 		if (!type) {
-			return "txt"
+			return "txt" // !
 		}
+		// <img />
 		if (/gif|bmp|jpeg|jpg|png|ico|img/i.test(type)) {
 			return "img"
 		}
+		// <iframe></iframe>
 		if (/doc|docx|xls|xlsx|ppt|pptx|pdf/i.test(type)) {
 			return "pdf"
 		}
+		// <audio></audio>
 		if (/mp3|ogg|wav/i.test(type)) {
 			return "mp3"
 		}
+		// <video></video>
 		if (/mp4|webm|mkv/i.test(type)) {
 			return "mp4"
 		}
+		// !
 		return "txt"
 	}
 	/**
@@ -793,6 +799,12 @@
 	class Preview {
 		modal = []
 		// 展示方法
+		/**
+		 * url: string | Array<string>
+		 * option: {
+		 *  active: number = 0
+		 * }
+		 */
 		show(url, option) {
 			option = this.formatOption(option)
 			const modal = new Modal({

@@ -18,6 +18,13 @@
 -   音频文件：mp3、ogg、wav
 -   视频文件：mp4、webm、mkv
 
+## 在线演示地址
+
+ - 演示地址：http://up.icuapi.com/index
+
+ > 请勿上传重要的文件，该演示地址存储目录为临时目录，所有文件将会在每个月的月底进行全部删除。    
+ > 本地启动后访问页面地址为：http://localhost:8301/index（还需修改参数配置或搭配Nginx使用）
+
 ## 运行方式
 
 > 【必须】程序运行所在环境安装 LibreOffice，PDF 转换基于 LibreOffice 完成(OpenOffice 也一样可用)  
